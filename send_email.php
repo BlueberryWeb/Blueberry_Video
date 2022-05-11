@@ -94,7 +94,7 @@ $bodyHtml = '
                   <td style="padding:0 0 36px 0;color:#153643; font-family: sans-serif;">
                     <img src="https://i.postimg.cc/k4Jn15MD/Nuevo-Contacto.png" alt="NUEVO CONTACTO" style="max-width: 500px; margin-left: 50px; margin-bottom: 60px; margin-top: 20px;"/>
                     <center>
-                      <h4 style="margin:0 0 12px 0;font-size: 20px; text-align: center; font-family: sans-serif;">Se ha capturado un nuevo lead en <b style="font-weight: 600; color: black;">BLUE BERRY VIDEO</b></h4>
+                      <h4 style="margin:0 0 12px 0;font-size: 20px; text-align: center; font-family: sans-serif;">Se ha capturado un nuevo lead en <b style="font-weight: 600; color: black;">BLUEBERRY VIDEO</b></h4>
                       <ul style="color: #aba9a8; list-style: none; text-align: center;">
                         <li style="margin-bottom: 10px;">Correo electrónico: '.$email.'</li>
                         <li style="margin-bottom: 10px;">Nombre: '.$nombre.'</li>
