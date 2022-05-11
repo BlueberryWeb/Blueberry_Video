@@ -43,8 +43,8 @@ $recipient4 = 'ventas01bb@gmail.com';
 $usernameSmtp = 'noreply.blueberry@gmail.com';
 
 // Replace smtp_password with your Amazon SES SMTP password.
-$passwordSmtp = 'cgzprtdhidlprmml';
-// $passwordSmtp = 'Blueberry0707';
+// $passwordSmtp = 'cgzprtdhidlprmml';
+$passwordSmtp = 'Blueberry0707';
 // yzdxqavoiqugkxmj
 
 
