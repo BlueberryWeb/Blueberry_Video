@@ -270,7 +270,7 @@ transition: all 300ms;
     font-family: 'Prompt', sans-serif;
 }
 .icon-WAPS{
-    max-width: 300px;
+    max-width: 200px;
 }
 @keyframes rotar{
     from{
