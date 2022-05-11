@@ -241,7 +241,37 @@ transition: all 300ms;
 .content-carrousel img:hover{
 transform: scale(1.2);
 transition: all 300ms;
-} 
+}
+.texto-morado{
+    background: linear-gradient(to right,#910ec6,#c12cb9);
+    -webkit-background-clip: text;
+    color: transparent; 
+}
+.call-action{
+    color: #000;
+    background: none;
+    border-color: #000;
+    font-family: 'Prompt', sans-serif;
+}
+.call-action:hover{
+    background: linear-gradient(to right,#910ec6,#c12cb9);
+    color: #fff;
+    border-color: linear-gradient(to right,#910ec6,#c12cb9);
+}
+.call-action a:hover{
+    color: #fff;
+}
+.call-action h5{
+    color: #000;
+    font-family: 'Prompt', sans-serif;
+}
+.call-action a{
+    color: #000;
+    font-family: 'Prompt', sans-serif;
+}
+.icon-WAPS{
+    max-width: 200px;
+}
 @keyframes rotar{
     from{
         transform: rotateY(0deg);
