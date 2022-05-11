@@ -1,91 +1,174 @@
-<?php 
-require 'PHPMailerAutoload.php';  
-//Create a new PHPMailer instance
-$mail = new PHPMailer;
-$mail->CharSet = "UTF-8";
-$mail->isSMTP();
-$mail->SMTPDebug = 0;
-$mail->Host = 'smtp-relay.sendinblue.com';
-//$mail->Host = gethostbyname('smtp.mailgun.org');
-$mail->Port = 587;
-$mail->SMTPAuth = true;
-$mail->SMTPSecure = 'tls';
+<?php
+/**
+ * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * This file is licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License. A copy of
+ * the License is located at
+ *
+ * http://aws.amazon.com/apache2.0/
+ *
+ * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 
-$mail->SMTPOptions = array(
-   'ssl' => array(
-       'verify_peer' => false,
-       'verify_peer_name' => false,
-       'allow_self_signed' => true
-   )
-);
 
-$mail->Username = 'developer@redcore.com.mx';   // SMTP username
-$mail->Password = 'ngAd2GrPcawRJ3Lx';  
+$nombre = trim($_POST['nombre']);
+$email = trim($_POST['email']);
+$telefono = trim($_POST['telefono']);
+$mensaje = trim($_POST['mensaje']);
 
-//Set who the message is to be sent to
-$mail->setFrom('hello@blueberry.mx', 'Blueberry Video Media ');
-//Set who the message is to be sent from  
-$mail->addAddress('fidelberry1@gmail.com', 'Fidel Galvan');
-$mail->addAddress('hello@blueberry.mx', 'Hello BB'); 
-$mail->addAddress('ventas@blueberry.mx', 'Ventas BB');  
+// Import PHPMailer classes into the global namespace.
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-$mail->Subject = 'Mensaje desde el sitio web de Video Media';
-$mail->Body    = 'Mensaje Web Contacto: \n';
- 
-    if(isset($_POST['email'])) {
-          // validation expected data exists
-          if(
-     
-            !isset($_POST['nombre']) ||  
-            !isset($_POST['email']) || 
-            !isset($_POST['telefono']) ||  
-            !isset($_POST['mensaje'])) {
-     
-            die('Datos invalidos.');       
-     
-          }
+// If necessary, modify the path in the require statement below to refer to the
+// location of your Composer autoload.php file.
+require './vendor/autoload.php';
 
-            $name_con = $_POST['nombre'];   
-            $email_from= $_POST['email'];    
-            $phone= $_POST['telefono'];         
-            $message = $_POST['mensaje'];
-      
-            //Set an alternative reply-to address
-            $mail->addReplyTo($_POST['email'], $_POST['email'],  $_POST['mensaje']);
+// Replace sender@example.com with your "From" address.
+// This address must be verified with Amazon SES.
+$sender = 'noreply.blueberry@gmail.com';
+$senderName = 'Pagina Blueberry Video';
 
-      
-            $email_exp = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
-            $nom_exp = '/^[A-Za-z0-9._ áéíóúÁÉÍÓÚ]/'; 
-            if(!preg_match($email_exp,$email_from)){
-                $error_message .= 'La dirección de email no es valida.<br />';
-            }
-            if(!preg_match($nom_exp,$name_con)){
-                $error_message .= 'El nombre contiene caracteres no validos.<br />';
-            } 
+// Replace recipient@example.com with a "To" address. If your account
+// is still in the sandbox, this address must be verified.
+$recipient = 'pruebas.blueberry2@gmail.com';
+$recipient = 'noreply.blueberry@gmail.com';
 
-            function clean_string($string) {
-              $bad = array("content-type","bcc:","to:","cc:","href");
-              return str_replace($bad,"",$string);
-            }
-      
-            $email_message = "---Información del contacto.---\n\n";            
-            $email_message .= "Nombre: ".clean_string($name_con)."\n";
-            $email_message .= "Teléfono: ".clean_string($phone)."\n"; 
-            $email_message .= "Email: ".clean_string($email_from)."\n\n";   
-            $email_message .= "<strong>".clean_string($message)."\n\n </strong>";
-            $mail->Body = "".$email_message;
-      
-      if($mail->send()){        
-        header('Location: index.html?success=true'); 
-        exit;
-      }else{
-        echo 'Message could not be sent.<br>';
-        echo 'Mailer Error: ' . $mail->ErrorInfo;
-        exit;
-        header('Location: index.html?success=false');
-        
-      }
-        
-    }
+// Replace smtp_username with your Amazon SES SMTP user name.
+$usernameSmtp = 'noreply.blueberry@gmail.com';
+
+// Replace smtp_password with your Amazon SES SMTP password.
+$passwordSmtp = 'Blueberry0707';
+
+// Specify a configuration set. If you do not want to use a configuration
+// set, comment or remove the next line.
+$configurationSet = 'ConfigSet';
+
+// If you're using Amazon SES in a region other than US West (Oregon),
+// replace email-smtp.us-west-2.amazonaws.com with the Amazon SES SMTP
+// endpoint in the appropriate region.
+$host = 'smtp.gmail.com';
+$port = 587;
+
+// The subject line of the email
+$subject = 'Mensaje de Blueberry Video';
+
+// The plain-text body of the email
+$bodyText =  "Correo de la web";
+
+// The HTML-formatted body of the email
+$bodyHtml = '
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="x-apple-disable-message-reformatting"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
+  <title></title>
+</head>
+<body style="margin:0;padding:0;">
+  <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;background:#ffffff; font-family: sans-serif;">
+    <tr>
+      <td align="center" style="padding:0;">
+        <table role="presentation" style="width:602px;border-collapse:collapse;border:0px solid #cccccc;border-spacing:0;text-align:left; font-family: sans-serif;">
+          <tr>
+            <td align="left" style="padding:10px 0 30px 0; font-family: sans-serif;">
+              <img src="https://i.postimg.cc/vHX6QB70/Bueberrypostivo.jpg" alt="DIRÉ MÓVIL" width="200" style="height:auto;display:block;" />
+              <hr>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0px 30px 42px 20px; font-family: sans-serif;">
+              <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0; font-family: sans-serif;">
+                <tr>
+                  <td style="padding:0 0 36px 0;color:#153643; font-family: sans-serif;">
+                    <img src="https://i.postimg.cc/k4Jn15MD/Nuevo-Contacto.png" alt="NUEVO CONTACTO" style="max-width: 500px; margin-left: 50px; margin-bottom: 60px; margin-top: 20px;"/>
+                    <center>
+                      <h4 style="margin:0 0 12px 0;font-size: 20px; text-align: center; font-family: sans-serif;">Se ha capturado un nuevo lead en <b style="font-weight: 600; color: black;">BLUE BERRY VIDEO</b></h4>
+                      <ul style="color: #aba9a8; list-style: none; text-align: center;">
+                        <li style="margin-bottom: 10px;">Correo electrónico: '.$email.'</li>
+                        <li style="margin-bottom: 10px;">Nombre: '.$nombre.'</li>
+                        <li style="margin-bottom: 10px;">Telefono: '.$telefono.'</li>
+                        <li style="margin-bottom: 10px;">Mensaje: '.$mensaje.'</li>
+                      </ul>
+                    </center>
+                    </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:30px;background:#000000; font-family: sans-serif;">
+              <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;font-size:9px; font-family:  sans-serif;">
+                <tr>
+                  <td style="padding:0;width:50%; font-family: sans-serif;" align="right">
+                    <img src="https://i.postimg.cc/4dpfLLNY/materialized-blueberry.gif" alt="MATERIALIZED BY Blueberry"/>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    
+    ';
+
+$mail = new PHPMailer(true);
+
+try {
+  // Specify the SMTP settings.
+  $mail->isSMTP();
+  $mail->setFrom($sender, $senderName);
+  $mail->Username   = $usernameSmtp;
+  $mail->From   = $usernameSmtp;
+  $mail->Password   = $passwordSmtp;
+  $mail->Host       = $host;
+  $mail->Port       = $port;
+  $mail->SMTPAuth   = true;
+  $mail->SMTPSecure = 'tls';
+  // $mail->SMTPDebug = true;
+  $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
+
+  // Specify the message recipients.
+  $mail->addAddress($recipient);
+  // You can also add CC, BCC, and additional To recipients here.
+
+  // Specify the content of the message.
+  $mail->isHTML(true);
+  $mail->Subject    = $subject;
+  $mail->Body       = $bodyHtml;
+  $mail->AltBody    = $bodyText;
+  $mail->Send();
+  sleep(7);
+  header("Location: {$_SERVER['HTTP_REFERER']}");
+} catch (phpmailerException $e) {
+  echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
+} catch (Exception $e) {
+  echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from Amazon SES.
+}
 
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
