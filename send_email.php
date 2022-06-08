@@ -1,71 +1,30 @@
+
 <?php
-/**
- * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * This file is licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License. A copy of
- * the License is located at
- *
- * http://aws.amazon.com/apache2.0/
- *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
-
-
 $nombre = trim($_POST['nombre']);
 $email = trim($_POST['email']);
 $telefono = trim($_POST['telefono']);
 $mensaje = trim($_POST['mensaje']);
 
-// Import PHPMailer classes into the global namespace.
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// If necessary, modify the path in the require statement below to refer to the
-// location of your Composer autoload.php file.
 require './vendor/autoload.php';
 
-// Replace sender@example.com with your "From" address.
-// This address must be verified with Amazon SES.
-$sender = 'noreply.blueberry@gmail.com';
-$senderName = 'Pagina Blueberry Video';
-
-// Replace recipient@example.com with a "To" address. If your account
-// is still in the sandbox, this address must be verified.
+$sender = 'noreply.blueberryvideo@gmail.com';
+$senderName = 'Pagina Blueberry video';
+$recipient = 'noreply.blueberryvideo@gmail.com';
 $recipient1 = 'pruebascorreosbb@gmail.com';
 $recipient2 = 'noreply.blueberry@gmail.com';
 $recipient3 = 'fidelberry1@gmail.com';
 $recipient4 = 'ventas01bb@gmail.com';
 
-// Replace smtp_username with your Amazon SES SMTP user name.
-$usernameSmtp = 'noreply.blueberry@gmail.com';
-
-// Replace smtp_password with your Amazon SES SMTP password.
-// $passwordSmtp = 'cgzprtdhidlprmml';
-$passwordSmtp = 'Blueberry0707';
-// yzdxqavoiqugkxmj
-
-
-
-// Specify a configuration set. If you do not want to use a configuration
-// set, comment or remove the next line.
+$usernameSmtp = 'noreply.blueberryvideo@gmail.com';
+$passwordSmtp = 'hdgybzekimhkzhus';
 $configurationSet = 'ConfigSet';
-
-// If you're using Amazon SES in a region other than US West (Oregon),
-// replace email-smtp.us-west-2.amazonaws.com with the Amazon SES SMTP
-// endpoint in the appropriate region.
 $host = 'smtp.gmail.com';
 $port = 587;
-
-// The subject line of the email
-$subject = 'Mensaje de Blueberry Video';
-
-// The plain-text body of the email
+$subject = 'Mensaje de Blueberry Video en la web';
 $bodyText =  "Correo de la web";
-
-// The HTML-formatted body of the email
 $bodyHtml = '
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -129,55 +88,71 @@ $bodyHtml = '
 </body>
 </html>
     
-    ';
+
+';
 
 $mail = new PHPMailer(true);
 
-try {
-  // Specify the SMTP settings.
-  $mail->isSMTP();
-  $mail->setFrom($sender, $senderName);
-  $mail->Username   = $usernameSmtp;
-  $mail->From   = $usernameSmtp;
-  $mail->Password   = $passwordSmtp;
-  $mail->Host       = $host;
-  $mail->Port       = $port;
-  $mail->SMTPAuth   = true;
-  $mail->SMTPSecure = 'tls';
-  // $mail->SMTPDebug = true;
-  $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
-  // Specify the message recipients.
-  $mail->addAddress($recipient1);
-  $mail->addAddress($recipient2);
-  $mail->addAddress($recipient3);
-  $mail->addAddress($recipient4);
-  // You can also add CC, BCC, and additional To recipients here.
+// Ingresa tu clave secreta.....
+define("RECAPTCHA_V3_SECRET_KEY", '6LcbFlUgAAAAALajj57uqSPKg-7BdSqlyTQMZ242');
+$token = $_POST['token'];
+$action = $_POST['action'];
 
-  // Specify the content of the message.
-  $mail->isHTML(true);
-  $mail->Subject    = $subject;
-  $mail->Body       = $bodyHtml;
-  $mail->AltBody    = $bodyText;
-  $mail->Send();
-  sleep(7);
-  header("Location: {$_SERVER['HTTP_REFERER']}");
-} catch (phpmailerException $e) {
-  echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
-} catch (Exception $e) {
-  echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from Amazon SES.
+// call curl to POST request
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array('secret' => RECAPTCHA_V3_SECRET_KEY, 'response' => $token)));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+curl_close($ch);
+$arrResponse = json_decode($response, true);
+
+// verificar la respuesta
+if ($arrResponse["success"] == '1' && $arrResponse["action"] == $action && $arrResponse["score"] >= 0.5) {
+    // Si entra aqui, es un humano, puedes procesar el formulario
+    try {
+        $mail->isSMTP();
+        $mail->setFrom($sender, $senderName);
+        $mail->Username   = $usernameSmtp;
+        $mail->From   = $usernameSmtp;
+        $mail->Password   = $passwordSmtp;
+        $mail->Host       = $host;
+        $mail->Port       = $port;
+        $mail->SMTPAuth   = true;
+        $mail->SMTPSecure = 'tls';
+        $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
+        $mail->addAddress($recipient);
+        $mail->addAddress($recipient1);
+        $mail->addAddress($recipient2);
+        $mail->addAddress($recipient3);
+        $mail->addAddress($recipient4);
+        $mail->isHTML(true);
+        $mail->Subject    = $subject;
+        $mail->Body       = $bodyHtml;
+        $mail->AltBody    = $bodyText;
+        $mail->Send();
+        sleep(4);
+        header("Location: {$_SERVER['HTTP_REFERER']}");
+    } catch (phpmailerException $e) {
+        echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
+    } catch (Exception $e) {
+        echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from Amazon SES.
+    }
+} else {
+    // Si entra aqui, es un robot....
+    echo "Lo siento, parece que eres un Robot";
 }
 
+
+
+
+
+
+
+
+
+
+
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
