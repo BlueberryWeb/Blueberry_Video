@@ -10,16 +10,16 @@ use PHPMailer\PHPMailer\Exception;
 
 require './vendor/autoload.php';
 
-$sender = 'noreply.blueberryvideo@gmail.com';
+$sender = 'noreply.blueberry@gmail.com';
 $senderName = 'Pagina Blueberry video';
-$recipient = 'noreply.blueberryvideo@gmail.com';
+$recipient = 'noreply.blueberry@gmail.com';
 $recipient1 = 'pruebascorreosbb@gmail.com';
 $recipient2 = 'noreply.blueberry@gmail.com';
 $recipient3 = 'fidelberry1@gmail.com';
 $recipient4 = 'ventas01bb@gmail.com';
 
-$usernameSmtp = 'noreply.blueberryvideo@gmail.com';
-$passwordSmtp = 'hdgybzekimhkzhus';
+$usernameSmtp = 'noreply.blueberry@gmail.com';
+$passwordSmtp = 'gaqgvbkoqicovutj';
 $configurationSet = 'ConfigSet';
 $host = 'smtp.gmail.com';
 $port = 587;
@@ -95,7 +95,7 @@ $mail = new PHPMailer(true);
 
 
 // Ingresa tu clave secreta.....
-define("RECAPTCHA_V3_SECRET_KEY", '6LcbFlUgAAAAALajj57uqSPKg-7BdSqlyTQMZ242');
+define("RECAPTCHA_V3_SECRET_KEY", '6Lcpk1UgAAAAAOC4bYJEUMz4dhH5tG9av00M4bPB');
 $token = $_POST['token'];
 $action = $_POST['action'];
 
